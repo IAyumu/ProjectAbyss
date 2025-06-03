@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using VContainer.Unity;
 using VContainer;
+using Cysharp.Threading.Tasks;
 
 namespace Abyss
 {
@@ -9,17 +10,17 @@ namespace Abyss
     {
         protected override void Configure(IContainerBuilder builder)
         {
-            //builder.Register<SceneLoader>(Lifetime.Singleton);
         }
 
-        protected override void Awake()
+        protected override async void Awake()
         {
             base.Awake();
-            Addressables.InitializeAsync().Completed += handle =>
-            {
-                //var loader = Container.Resolve<SceneLoader>();
-                //loader.LoadSceneAsync("MainScene");
-            };
+            // Addressables‚Ì‰Šú‰»‚ğawait‚Å‘Ò‚Â
+            await Addressables.InitializeAsync().ToUniTask();
+
+            // DI‚©‚çSceneLoader‚ğ‰ğŒˆ‚µ‚ÄMainƒV[ƒ“‚Ö‘JˆÚ
+            var loader = Container.Resolve<SceneLoader>();
+            await loader.LoadSceneAsync("Main");
         }
     }
 
